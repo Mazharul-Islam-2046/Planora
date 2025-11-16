@@ -11,54 +11,38 @@ import {
 import { Input } from "./input";
 import { Button } from "./button";
 import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
 } from "./form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Field, FieldDescription } from "./field";
 import { signInAction } from "@/app/actions/auth";
-import { useState } from "react";
-
-
 
 const formSchema = z.object({
-    email: z.string().email({ message: "Invalid email address." }),
-    password: z
+  email: z.string().email({ message: "Invalid email address." }),
+  password: z
     .string()
     .min(6, { message: "Password must be at least 6 characters." }),
 });
 
 export function AuthenticationDialog() {
-
-
-
-    const [isSignInForm, setIsSignInForm] = useState(false);
-
-
-
-
-    // ✅ Initialize form correctly
-    const form = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
-        defaultValues: {
-            email: "",
-            password: "",
+  // ✅ Initialize form correctly
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      email: "",
+      password: "",
     },
   });
-  
+
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-      await signInAction(values);
-    };
-    
-    
-    const handleFormSwitch = () => {
-      setIsSignInForm(!isSignInForm);
-    };
+    await signInAction(values);
+  };
 
   return (
     <Dialog>
@@ -107,7 +91,7 @@ export function AuthenticationDialog() {
                   Login with Google
                 </Button>
                 <FieldDescription className="text-center">
-                  Don&apos;t have an account? <a onClick={handleFormSwitch} href="#">{isSignInForm ? "Sign in" : "Sign up"}</a>
+                  Don&apos;t have an account? <a href="#">Sign up</a>
                 </FieldDescription>
               </Field>
             </DialogFooter>

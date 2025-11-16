@@ -5,6 +5,9 @@ import { signInSchema } from "./lib/zod"
 import { ZodError } from "zod"
  
 export const { handlers, signIn, signOut, auth } = NextAuth({
+  session: {
+    strategy: "jwt",
+  },
   providers: [Credentials({
       credentials: {
         email: {
