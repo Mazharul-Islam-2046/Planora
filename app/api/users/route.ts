@@ -7,5 +7,6 @@ export async function GET() {
         return new Response("No users found", { status: 404 });
     }
 
+    console.log(JSON.stringify(users));
     return new Response(JSON.stringify(users), { status: 200 });
 }
