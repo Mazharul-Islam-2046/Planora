@@ -20,13 +20,13 @@ export default function Home() {
         <h3>Todo List</h3>
         <p>{isLoading ? "Loading..." : "See Below"}</p>
         <p>{error ? "Error" : "All is well"}</p>
-        <li>
+        <ul style={{ listStyleType: "disc" }}>
           {
             data?.map((user, idx) => (
-              <ul key={idx}>{user.email}</ul>
+              <li key={idx}>{user.email}</li>
             ))
           }
-        </li>
+        </ul>
       </div>
     </>
   );

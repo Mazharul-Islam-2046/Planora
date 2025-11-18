@@ -23,6 +23,7 @@ import { Field, FieldDescription } from "./field";
 import { Button } from "./button";
 import { saveUserAction } from "@/app/actions/user";
 import { useGetUsersQuery } from "@/api/userApi";
+import { useState } from "react";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Invalid email address." }),
@@ -40,17 +41,21 @@ const TodoForm = () => {
   });
 
   const {refetch} = useGetUsersQuery()
+  const [open, setOpen] = useState(false)
 
 
   const handleSaveUser = async (values: z.infer<typeof formSchema>) => {
     // Handle form submission
-    await saveUserAction(values);
+    const res = await saveUserAction(values);
+    if (res.status === 201) {
+      setOpen(false);
+    }
     refetch();
     console.log(values);
   }
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger className="cursor-pointer">Open Todo Form</DialogTrigger>
       <DialogContent>
         <DialogHeader>

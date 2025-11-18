@@ -6,11 +6,15 @@ interface UserData {
     name: string;
 }
 export async function saveUserAction(formData: UserData) {
-    const res = await prisma.user.create({
+    const createdUser = await prisma.user.create({
         data: {
             email: formData.email as string,
             name: formData.name as string,
         },
     });
-    return res;
+    return {
+        data: createdUser,
+        status: 201,
+        message: "User created successfully",
+    };
 }
