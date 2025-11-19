@@ -18,3 +18,16 @@ export async function saveUserAction(formData: UserData) {
         message: "User created successfully",
     };
 }
+
+
+export async function deleteUserAction(userId: string) {
+    await prisma.user.delete({
+        where: {
+            id: userId,
+        },
+    });
+    return {
+        status: 200,
+        message: "User deleted successfully",
+    };
+}

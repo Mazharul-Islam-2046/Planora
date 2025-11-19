@@ -2,10 +2,19 @@
 import { useGetUsersQuery } from "@/api/userApi";
 import { AuthenticationDialog } from "@/components/ui/AuthenticationDialog";
 import TodoForm from "@/components/ui/TodoForm";
+import { Delete } from "lucide-react";
+import { deleteUserAction } from "./actions/user";
 
 export default function Home() {
 
-  const { data, error, isLoading } = useGetUsersQuery();
+  const { data, error, isLoading, refetch } = useGetUsersQuery();
+  const handleDelete = async (id: string) => {
+    const res = await deleteUserAction(id);
+    if (res.status === 200) {
+      console.log("User Deleted Successfuly")
+      refetch();
+    }
+  }
 
 
   return (
@@ -23,7 +32,10 @@ export default function Home() {
         <ul style={{ listStyleType: "disc" }}>
           {
             data?.map((user, idx) => (
-              <li key={idx}>{user.email}</li>
+              <div className="flex items-center gap-3" key={idx}>
+                <li>{user.email}</li>
+                <button onClick={() => handleDelete(user.id)}><Delete/></button>
+              </div>
             ))
           }
         </ul>
