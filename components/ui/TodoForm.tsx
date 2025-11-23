@@ -51,6 +51,7 @@ const TodoForm = () => {
       setOpen(false);
     }
     refetch();
+    form.reset();
     console.log(values);
   }
 
