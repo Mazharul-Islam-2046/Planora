@@ -1,25 +1,82 @@
 datasource db {
   provider = "mongodb"
 }
- 
+
 generator client {
   provider = "prisma-client-js"
 }
- 
+
 model User {
   id            String          @id @default(auto()) @map("_id") @db.ObjectId
   name          String?
   email         String?         @unique
   emailVerified DateTime?
   image         String?
+  adminWorkspaces Workspace[]
+  moderatorWorkspaces Workspace[] @relation("ModeratorWorkspace", fields: [moderatorWorkspaceIds], references: [id])
+  moderatorWorkspaceIds String[] @db.ObjectId
+  workspaces   Workspace[]      @relation("workspaces", fields: [workspaceIds], references: [id])
+  workspaceIds String[]       @db.ObjectId
+  tasksAssigned  Subtask[]
   accounts      Account[]
   // Optional for WebAuthn support
   Authenticator Authenticator[]
- 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
- 
+
+// Workspace Model
+model Workspace {
+  id                String  @id @default(auto()) @map("_id") @db.ObjectId
+  name              String
+  description       String?
+  members           User[]  @relation("workspaces", fields: [memberIds], references: [id])
+  memberIds        String[] @db.ObjectId
+  adminId           String  @db.ObjectId
+  moderators     User[]   @relation("ModeratorWorkspace", fields: [moderatorIds], references: [id])
+  moderatorIds   String[] @db.ObjectId
+  tasks             Task[]
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  admin User @relation(fields: [adminId], references: [id], onDelete: Cascade)
+}
+
+
+
+
+// Task Model
+model Task {
+  id                String  @id @default(auto()) @map("_id") @db.ObjectId
+  title             String
+  description       String?
+  subtasks          Subtask[]
+  status            String
+  workspaceId      String  @db.ObjectId
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+}
+
+
+
+
+// subtask Model
+model Subtask {
+  id                String  @id @default(auto()) @map("_id") @db.ObjectId
+  taskId            String  @db.ObjectId
+  title             String
+  description       String?
+  status            String
+  assignedToId      String? @db.ObjectId 
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  task Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  assignedTo User? @relation(fields: [assignedToId], references: [id], onDelete: Cascade)
+}
+
 model Account {
   id                String  @id @default(auto()) @map("_id") @db.ObjectId
   userId            String  @db.ObjectId
@@ -33,16 +90,15 @@ model Account {
   scope             String?
   id_token          String? @db.String
   session_state     String?
- 
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
- 
+
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
- 
+
   @@unique([provider, providerAccountId])
 }
- 
- 
+
 // Optional for WebAuthn support
 model Authenticator {
   credentialID         String  @id @map("_id")
@@ -53,8 +109,8 @@ model Authenticator {
   credentialDeviceType String
   credentialBackedUp   Boolean
   transports           String?
- 
+
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
- 
+
   @@unique([userId, credentialID])
 }
