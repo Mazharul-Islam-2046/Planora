@@ -6,7 +6,7 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
-   if (!id) {
+  if (!id) {
     return NextResponse.json({ error: "User ID is required" }, { status: 400 });
   }
 
@@ -17,10 +17,12 @@ export async function GET(
   if (!user) {
     return NextResponse.json({ error: "User not found" }, { status: 404 });
   }
-  
-  return NextResponse.json({ user, message: "User found successfully" }, { status: 200 });
-}
 
+  return NextResponse.json(
+    { user, message: "User found successfully" },
+    { status: 200 }
+  );
+}
 
 export async function DELETE(
   request: NextRequest,
@@ -40,9 +42,11 @@ export async function DELETE(
     return NextResponse.json({ error: "User not found" }, { status: 404 });
   }
 
-  return NextResponse.json({ message: "User deleted successfully" }, { status: 200 });
+  return NextResponse.json(
+    { message: "User deleted successfully" },
+    { status: 200 }
+  );
 }
-
 
 export async function PATCH(
   request: NextRequest,
@@ -63,5 +67,8 @@ export async function PATCH(
     return NextResponse.json({ error: "User not found" }, { status: 404 });
   }
 
-  return NextResponse.json({ data, message: "User updated successfully" }, { status: 200 });
+  return NextResponse.json(
+    { data, message: "User updated successfully" },
+    { status: 200 }
+  );
 }
