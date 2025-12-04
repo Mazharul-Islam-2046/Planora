@@ -49,15 +49,12 @@ const TodoForm = () => {
       if (isSuccess) {
         setOpen(false);
       }
-      if (isError) {
-        console.log(error)
-      }
       form.reset();
       console.log(values);
       console.log("user created successfully!");
       console.log(isSuccess)
     } catch (error) {
-      throw error;
+      console.log(error);
     }
   };
 

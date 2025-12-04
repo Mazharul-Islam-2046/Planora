@@ -26,6 +26,9 @@ export async function POST(request: NextRequest) {
     if (!user) {
       return new Response("Something Went Worng creating the user", {
         status: 500,
+        headers: {
+            "Content-Type": "application/json"
+        }
       });
     }
 
@@ -36,6 +39,60 @@ export async function POST(request: NextRequest) {
       },
     });
   } catch (error: any) {
-    return new Response(error)
+    console.error("Error in POST /api/users:", error);
+
+    // Handle JSON parsing errors
+    if (error instanceof SyntaxError) {
+      return new Response(
+        JSON.stringify({ 
+          error: "Invalid request", 
+          message: "Invalid JSON in request body" 
+        }), 
+        { 
+          status: 400,
+          headers: { "Content-Type": "application/json" }
+        }
+      );
+    }
+
+    // Handle Prisma unique constraint violations (duplicate email)
+    if (error.code === "P2002") {
+      return new Response(
+        JSON.stringify({ 
+          error: "Conflict", 
+          message: "A user with this email already exists" 
+        }), 
+        { 
+          status: 409,
+          headers: { "Content-Type": "application/json" }
+        }
+      );
+    }
+
+    // Handle other Prisma errors
+    if (error.code?.startsWith("P")) {
+      return new Response(
+        JSON.stringify({ 
+          error: "Database error", 
+          message: "Failed to create user" 
+        }), 
+        { 
+          status: 500,
+          headers: { "Content-Type": "application/json" }
+        }
+      );
+    }
+
+    // Generic error fallback
+    return new Response(
+      JSON.stringify({ 
+        error: "Internal server error", 
+        message: "An unexpected error occurred" 
+      }), 
+      { 
+        status: 500,
+        headers: { "Content-Type": "application/json" }
+      }
+    );
   }
 }
