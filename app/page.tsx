@@ -34,7 +34,7 @@ export default function Home() {
             data?.map((user, idx) => (
               <div className="flex items-center gap-3" key={idx}>
                 <li>{user.email}</li>
-                <button onClick={() => handleDelete(user.id)}><Delete/></button>
+                <button onClick={() => handleDelete(user.id!)}><Delete/></button>
               </div>
             ))
           }
