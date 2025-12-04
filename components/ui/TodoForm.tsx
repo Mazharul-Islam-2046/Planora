@@ -21,14 +21,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Field, FieldDescription } from "./field";
 import { Button } from "./button";
-import { saveUserAction } from "@/app/actions/user";
-import { useGetUsersQuery } from "@/api/userApi";
+import { useCreateUserMutation } from "@/api/userApi";
 import { useState } from "react";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Invalid email address." }),
-  name: z
-    .string().min(2, { message: "Name must be at least 2 characters." }),
+  name: z.string().min(2, { message: "Name must be at least 2 characters." }),
 });
 const TodoForm = () => {
   // Initialize form correctly
@@ -40,20 +38,28 @@ const TodoForm = () => {
     },
   });
 
-  const {refetch} = useGetUsersQuery()
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(false);
 
+  const [createUser, { isLoading, isSuccess, isError, error }] =
+    useCreateUserMutation();
 
   const handleSaveUser = async (values: z.infer<typeof formSchema>) => {
-    // Handle form submission
-    const res = await saveUserAction(values);
-    if (res.status === 201) {
-      setOpen(false);
+    try {
+      await createUser(values).unwrap();
+      if (isSuccess) {
+        setOpen(false);
+      }
+      if (isError) {
+        console.log(error)
+      }
+      form.reset();
+      console.log(values);
+      console.log("user created successfully!");
+      console.log(isSuccess)
+    } catch (error) {
+      throw error;
     }
-    refetch();
-    form.reset();
-    console.log(values);
-  }
+  };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -92,11 +98,7 @@ const TodoForm = () => {
                 <FormItem className="grid gap-3">
                   <FormLabel>Name</FormLabel>
                   <FormControl>
-                    <Input
-                      type="text"
-                      placeholder="Your Name"
-                      {...field}
-                    />
+                    <Input type="text" placeholder="Your Name" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -105,7 +107,7 @@ const TodoForm = () => {
 
             <DialogFooter className="mt-4">
               <Field>
-                <Button type="submit">Save User</Button>
+                <Button type="submit">{isLoading ? "Loading" : "Save User"}</Button>
                 <Button variant="outline" type="button">
                   Login with Google
                 </Button>

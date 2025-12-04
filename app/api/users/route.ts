@@ -25,5 +25,7 @@ export async function POST(request: NextRequest) {
         data: { name, email },
     })
 
-    return new Response(JSON.stringify(user), { status: 201 });
+    return new Response(JSON.stringify(user), { status: 201, headers: {
+    "Content-Type": "application/json",
+  }, });
 }

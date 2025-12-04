@@ -6,9 +6,11 @@ const userApi = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: "/api/users",
   }),
+  tagTypes: ["Users"],
   endpoints: (builder) => ({
     getUsers: builder.query<IUser[], void>({
       query: () => "/",
+      providesTags: ["Users"]
     }),
     getUserById: builder.query<IUser, string>({
       query: (id: string) => `/${id}`,
@@ -19,10 +21,11 @@ const userApi = createApi({
         method: "POST",
         body: user,
       }),
+      invalidatesTags: ["Users"]
     }),
   }),
 });
 
-export const { useGetUsersQuery } = userApi;
+export const { useGetUsersQuery, useCreateUserMutation } = userApi;
 
 export default userApi;
