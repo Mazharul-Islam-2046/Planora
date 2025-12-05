@@ -41,3 +41,8 @@ const workspaceApi = createApi({
         })
     }),
 })
+
+
+export const { useGetWorkspacesQuery, useGetWorkspaceByIdQuery, useCreateWorkspaceMutation, useDeleteWorkspaceMutation, useUpdateWorkspaceMutation } = workspaceApi
+
+export default workspaceApi
