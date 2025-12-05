@@ -46,9 +46,7 @@ const TodoForm = () => {
   const handleSaveUser = async (values: z.infer<typeof formSchema>) => {
     try {
       await createUser(values).unwrap();
-      if (isSuccess) {
-        setOpen(false);
-      }
+      setOpen(false);
       form.reset();
       console.log(values);
       console.log("user created successfully!");

@@ -1,6 +1,5 @@
 import { IWorkspace } from "@/types/workspace";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { get } from "http";
 
 
 const workspaceApi = createApi({
@@ -29,6 +28,14 @@ const workspaceApi = createApi({
             query: (id: string) => ({
                 url: `/${id}`,
                 method: "DELETE"
+            }),
+            invalidatesTags: ["Workspaces"]
+        }),
+        updateWorkspace: builder.mutation<IWorkspace, IWorkspace>({
+            query: (workspace: IWorkspace) => ({
+                url: `/${workspace.id}`,
+                method: "PATCH",
+                body: workspace,
             }),
             invalidatesTags: ["Workspaces"]
         })
