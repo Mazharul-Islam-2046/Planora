@@ -14,6 +14,7 @@ const userApi = createApi({
     }),
     getUserById: builder.query<IUser, string>({
       query: (id: string) => `/${id}`,
+      providesTags: ["Users"]
     }),
     createUser: builder.mutation<IUser, IUser>({
       query: (user: IUser) => ({
@@ -30,11 +31,11 @@ const userApi = createApi({
       }),
       invalidatesTags: ["Users"]
     }),
-    updateUser: builder.mutation<IUser, IUser>({
-      query: (user: IUser) => ({
-        url: `/${user.id}`,
+    updateUser: builder.mutation<IUser, { id: string; data: Partial<IUser> }>({
+      query: ({ id, data }) => ({
+        url: `/${id}`,
         method: "PATCH",
-        body: user,
+        body: data,
       }),
       invalidatesTags: ["Users"]
     })
